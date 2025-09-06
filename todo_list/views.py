@@ -1,11 +1,21 @@
-from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
-from todo_list.models import ToDo
-from todo_list.serializers import ToDoSerializer
+from rest_framework import generics, permissions
+from .models import Todo
+from .pagination import CustomPagination
+from .serializers import TodoSerializer
+from drf_spectacular.utils import extend_schema
 
-
-class TodoListApp(ModelViewSet):
-    queryset = ToDo.objects.all()
-    serializer_class = ToDoSerializer
-    permission_classes = [IsAuthenticated]
+@extend_schema(tags=["ToDo"], request=TodoSerializer, responses={200: TodoSerializer(many=True)})
+class TodoListView(generics.ListCreateAPIView):
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CustomPagination
+    def get_queryset(self):
+        return Todo.objects.filter(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+@extend_schema(tags=["ToDo"], request=TodoSerializer, responses={200: TodoSerializer})
+class TodoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        return Todo.objects.filter(user=self.request.user)
