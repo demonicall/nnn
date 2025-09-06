@@ -199,5 +199,5 @@ ALLOWED_HOSTS = [
     '.ngrok-free.app',
     'eldorbekumrzoqov56@gmail.com',
     'localhost',
-    'e39a762ec10a.ngrok-free.app',
+    'todo2-un64.onrender.com',
 ]
