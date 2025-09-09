@@ -3,6 +3,8 @@ from datetime import timedelta
 from pathlib import Path
 import environ
 from datetime import timedelta
+import os
+import dj_database_url
 
 root = environ.Path(__file__) - 2
 env = environ.Env()
@@ -59,30 +61,36 @@ TEMPLATES = [
 ]
 
 
+
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'todo_db',
-#         'USER': 'postgres',
-#         'PASSWORD': '1234',
-#         'HOST': 'localhost',
-#         'PORT': 5432
-#     }
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': env.str('PG_DATABASE', 'postgres'),
+#         'USER': env.str('PG_USER', 'postgres'),
+#         'PASSWORD': env.str('PG_PASSWORD', 'postgres'),
+#         'HOST': env.str('DB_HOST', 'localhost'),
+#         'PORT': env.int('DB_PORT', 5432),
+#     },
+#     'extra': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     },
 # }
 
+
+
 DATABASES = {
-    'default': {
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3")
+    ),
+    'extra': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env.str('PG_DATABASE', 'postgres'),
         'USER': env.str('PG_USER', 'postgres'),
         'PASSWORD': env.str('PG_PASSWORD', 'postgres'),
         'HOST': env.str('DB_HOST', 'localhost'),
         'PORT': env.int('DB_PORT', 5432),
-    },
-    'extra': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
+    }
 }
 
 
